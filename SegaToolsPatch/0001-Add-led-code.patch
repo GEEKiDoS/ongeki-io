@@ -1,0 +1,132 @@
+From 786c9ca98942dd9f88ba10036d1579d81fabcd7a Mon Sep 17 00:00:00 2001
+From: GEEKiDoS <geek_ds@foxmail.com>
+Date: Fri, 1 Oct 2021 14:57:41 +0800
+Subject: [PATCH] Add led code
+
+---
+ board/io4.c         |  2 +-
+ board/io4.h         |  1 +
+ mu3hook/io4.c       | 13 +++++++++++++
+ mu3hook/mu3-dll.c   |  3 +++
+ mu3hook/mu3-dll.h   |  1 +
+ mu3hook/mu3hook.def |  1 +
+ mu3io/mu3io.c       |  4 ++++
+ mu3io/mu3io.h       |  2 ++
+ 8 files changed, 26 insertions(+), 1 deletion(-)
+
+diff --git a/board/io4.c b/board/io4.c
+index efad62f..9cdb054 100644
+--- a/board/io4.c
++++ b/board/io4.c
+@@ -223,7 +223,7 @@ static HRESULT io4_handle_write(struct irp *irp)
+ 
+     case IO4_CMD_SET_GENERAL_OUTPUT:
+         dprintf("USB I/O: GPIO Out\n");
+-
++        io4_ops->gpio_out(out.payload);
+         return S_OK;
+ 
+     case IO4_CMD_SET_PWM_OUTPUT:
+diff --git a/board/io4.h b/board/io4.h
+index 1a6cc05..87cd154 100644
+--- a/board/io4.h
++++ b/board/io4.h
+@@ -24,6 +24,7 @@ struct io4_state {
+ 
+ struct io4_ops {
+     HRESULT (*poll)(void *ctx, struct io4_state *state);
++    HRESULT (*gpio_out)(uint8_t *payload);
+ };
+ 
+ HRESULT io4_hook_init(
+diff --git a/mu3hook/io4.c b/mu3hook/io4.c
+index 7edcb0c..d7df696 100644
+--- a/mu3hook/io4.c
++++ b/mu3hook/io4.c
+@@ -11,9 +11,11 @@
+ #include "util/dprintf.h"
+ 
+ static HRESULT mu3_io4_poll(void *ctx, struct io4_state *state);
++static HRESULT mu3_io4_gpio_out(uint8_t *payload);
+ 
+ static const struct io4_ops mu3_io4_ops = {
+     .poll = mu3_io4_poll,
++    .gpio_out = mu3_io4_gpio_out,
+ };
+ 
+ HRESULT mu3_io4_hook_init(const struct io4_config *cfg)
+@@ -118,3 +120,14 @@ static HRESULT mu3_io4_poll(void *ctx, struct io4_state *state)
+ 
+     return S_OK;
+ }
++
++static HRESULT mu3_io4_gpio_out(uint8_t *payload)
++{
++    if (mu3_dll.set_led)
++    {
++        uint32_t data = payload[0] << 16 | payload[1] << 8 | payload[2];
++        mu3_dll.set_led(data);
++    }
++
++    return S_OK;
++}
+diff --git a/mu3hook/mu3-dll.c b/mu3hook/mu3-dll.c
+index 9e8e93e..6abf26c 100644
+--- a/mu3hook/mu3-dll.c
++++ b/mu3hook/mu3-dll.c
+@@ -24,6 +24,9 @@ const struct dll_bind_sym mu3_dll_syms[] = {
+     }, {
+         .sym = "mu3_io_get_lever",
+         .off = offsetof(struct mu3_dll, get_lever),
++    }, {
++        .sym = "mu3_io_set_led",
++        .off = offsetof(struct mu3_dll, set_led),
+     }
+ };
+ 
+diff --git a/mu3hook/mu3-dll.h b/mu3hook/mu3-dll.h
+index 41f280f..550772c 100644
+--- a/mu3hook/mu3-dll.h
++++ b/mu3hook/mu3-dll.h
+@@ -11,6 +11,7 @@ struct mu3_dll {
+     void (*get_opbtns)(uint8_t *opbtn);
+     void (*get_gamebtns)(uint8_t *left, uint8_t *right);
+     void (*get_lever)(int16_t *pos);
++    void (*set_led)(uint32_t info);
+ };
+ 
+ struct mu3_dll_config {
+diff --git a/mu3hook/mu3hook.def b/mu3hook/mu3hook.def
+index e7367fb..8b03862 100644
+--- a/mu3hook/mu3hook.def
++++ b/mu3hook/mu3hook.def
+@@ -18,3 +18,4 @@ EXPORTS
+     mu3_io_get_opbtns
+     mu3_io_init
+     mu3_io_poll
++    mu3_io_set_led
+diff --git a/mu3io/mu3io.c b/mu3io/mu3io.c
+index 0bbd37f..bcbc668 100644
+--- a/mu3io/mu3io.c
++++ b/mu3io/mu3io.c
+@@ -146,3 +146,7 @@ void mu3_io_get_lever(int16_t *pos)
+         *pos = mu3_lever_xpos;
+     }
+ }
++
++void mu3_io_set_led(uint32_t led)
++{
++}
+diff --git a/mu3io/mu3io.h b/mu3io/mu3io.h
+index d46a475..e540a3d 100644
+--- a/mu3io/mu3io.h
++++ b/mu3io/mu3io.h
+@@ -82,3 +82,5 @@ void mu3_io_get_gamebtns(uint8_t *left, uint8_t *right);
+    Minimum API version: 0x0100 */
+ 
+ void mu3_io_get_lever(int16_t *pos);
++
++void mu3_io_set_led(uint32_t led);
+-- 
+2.30.1.windows.1
+
