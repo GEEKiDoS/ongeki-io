@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MU3Input</RootNamespace>
     <AssemblyName>MU3Input</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -65,21 +66,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AimiIO.cs" />
-    <Compile Include="AimiTest.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AimiTest.Designer.cs">
-      <DependentUpon>AimiTest.cs</DependentUpon>
-    </Compile>
+    <Compile Include="HidIO.cs" />
     <Compile Include="MU3IO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerialIO.cs" />
-    <Compile Include="SerialTest.cs">
+    <Compile Include="IOTest.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SerialTest.Designer.cs">
-      <DependentUpon>SerialTest.cs</DependentUpon>
+    <Compile Include="IOTest.Designer.cs">
+      <DependentUpon>IOTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="SimpleRawHid.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DllExport">
@@ -92,11 +88,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AimiTest.resx">
-      <DependentUpon>AimiTest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SerialTest.resx">
-      <DependentUpon>SerialTest.cs</DependentUpon>
+    <EmbeddedResource Include="IOTest.resx">
+      <DependentUpon>IOTest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
