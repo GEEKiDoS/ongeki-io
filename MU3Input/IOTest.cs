@@ -46,6 +46,7 @@ namespace MU3Input
         internal void UpdateData()
         {
             if (!Enabled && Handle == IntPtr.Zero) return;
+            if(_io.Data.Buttons == null) return;
 
             try
             {
@@ -55,6 +56,9 @@ namespace MU3Input
 
                     if (!_io.IsConnected) return;
 
+                    if(testDown) _io.TestButton = 3;
+                    else _io.TestButton = 0;
+      
                     for (var i = 0; i < 5; i++)
                     {
                         _left[i].Checked = Convert.ToBoolean(_io.Data.Buttons[i]);
@@ -140,6 +144,18 @@ namespace MU3Input
             }
             
             _io.SetAimiId(aimiId);
+        }
+
+        bool testDown = false;
+
+        private void TestDown(object sender, MouseEventArgs e)
+        {
+            testDown = true;
+        }
+
+        private void TestUp(object sender, MouseEventArgs e)
+        {
+            testDown = false;
         }
     }
 }

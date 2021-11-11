@@ -289,7 +289,6 @@ namespace SimpleHID.Raw
                 retValue = HidD_GetAttributes(h, ref attrib);
 
                 IntPtr hidData = new IntPtr(0);
-                Console.WriteLine($"{index} - {attrib.VendorID:x}:{attrib.ProductID:x}");
 
                 if (!retValue || (vid > 0 && attrib.VendorID != vid) ||
                     (pid > 0 && attrib.ProductID != pid) ||

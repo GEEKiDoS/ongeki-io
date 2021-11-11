@@ -41,6 +41,7 @@ namespace MU3Input
                 Io.Reconnect();
             }
 
+            // Io.TestButton = 0;
             _test.UpdateData();
             return 0;
         }
@@ -48,7 +49,7 @@ namespace MU3Input
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_opbtns")]
         public static void GetOpButtons(out byte opbtn)
         {
-            opbtn = 0;
+            opbtn = Io.TestButton;
         }
 
         [DllExport(CallingConvention.Cdecl, ExportName = "mu3_io_get_gamebtns")]

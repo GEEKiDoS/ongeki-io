@@ -16,16 +16,17 @@ int main()
 	mu3_io_init();
 
 	uint8_t opbtn, leftbtn, rightbtn;
-	//int16_t lever;
+	int16_t lever;
 
 	while(true)
 	{
 		mu3_io_poll();
 
 		mu3_io_get_opbtns(&opbtn);
+		mu3_io_get_lever(&lever);
 		mu3_io_get_gamebtns(&leftbtn, &rightbtn);
 
-		printf("%d %d %d %d\n", opbtn, leftbtn, rightbtn);
+		printf("%d %d %d %d\n", opbtn, leftbtn, rightbtn, lever);
 		Sleep(16);
 	}
 
